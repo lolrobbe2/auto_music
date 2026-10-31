@@ -11,6 +11,8 @@ dependencies:
   audio_service: ^0.18.19
   flutter:
     sdk: flutter
+  logger: ^2.8.0
+  on_audio_query_pluse: ^3.0.7
   plugin_platform_interface: ^2.0.2
 
 dev_dependencies:

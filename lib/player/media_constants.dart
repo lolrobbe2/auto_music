@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
-
-import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
+import 'dart:ffi';
 
 import 'package:audio_service/audio_service.dart';
 
@@ -24,6 +23,9 @@ class MediaConstants {
       "android.media.browse.extra.DOWNLOAD_PROGRESS";
   static final String EXTRAS_KEY_DOWNLOAD_STATUS =
       "android.media.extra.DOWNLOAD_STATUS";
+
+
+  static final String EXTRAS_KEY_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED";
 }
 
 enum ItemStyle {

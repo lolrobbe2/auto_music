@@ -1,0 +1,6 @@
+<paths>
+    <!-- Gives access to files in the app’s internal storage directory -->
+    <files-path path="selected_aa/" name="album_art" />
+    <!-- Optionally, give access to cache files -->
+    <cache-path path="." name="cache_files" />
+</paths>

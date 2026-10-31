@@ -43,7 +43,9 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
-
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.7.0") // Or the latest version
+}
 flutter {
     source = "../.."
 }
