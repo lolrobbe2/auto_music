@@ -2,7 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:auto_music/player/auto_music_player.dart';
 import 'package:auto_music/player/media_constants.dart';
 import 'package:auto_music/query/root_querry.dart';
-
+export 'package:audio_service/audio_service.dart' show MediaItem;
 import 'auto_music_platform_interface.dart';
 class AutoMusic {
   AutoMusic() {

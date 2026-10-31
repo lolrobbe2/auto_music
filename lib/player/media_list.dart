@@ -50,6 +50,7 @@ class MediaList extends MediaItem {
       album: album,
     );
   }
+
   static MediaList fromMediaItem(MediaItem item) {
     return MediaList._(
       name: item.title,
@@ -115,11 +116,50 @@ class MediaList extends MediaItem {
     return (found: false, children: <MediaItem>[]);
   }
 
+  MediaItem? findById(String mediaId) {
+    for (final MediaItem item in _items.values) {
+      if (item.id == mediaId) {
+        return item;
+      }
+
+      if (item is MediaList) {
+        final MediaItem? result = item.findById(mediaId);
+
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+
+    return null;
+  }
+MediaList? findParent(String mediaId) {
+  for (final MediaItem item in _items.values) {
+    if (item.id == mediaId) {
+      return this;
+    }
+
+    if (item is MediaList) {
+      final MediaList? parent = item.findParent(mediaId);
+
+      if (parent != null) {
+        return parent;
+      }
+    }
+  }
+
+  return null;
+}
   void add(MediaItem mediaItem) {
     _items[mediaItem.id] = mediaItem;
   }
-  void addMultiple(List<MediaItem> mediaItems){
+
+  void addMultiple(List<MediaItem> mediaItems) {
     mediaItems.forEach((item) => add(item));
+  }
+
+  List<MediaItem> GetValues() {
+    return _items.values.toList();
   }
 }
 

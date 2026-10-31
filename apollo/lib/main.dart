@@ -3,17 +3,23 @@ import 'package:auto_music/player/auto_music_player.dart';
 import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/query/album_query.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_music/query/song_query.dart';
 
 Future<void> main() async {
   AutoMusic();
-  final albums = await MediaList.create(name: "Albums",);
-  final playlists = await MediaList.create(
-    name: "Playlists",
-  );
-  albums.addMultiple(await AlbumQuery.FetchAlbumsList());
+  final albums = await MediaList.create(name: "Albums");
+  final playlists = await MediaList.create(name: "Playlists");
+  final List<MediaList> albumList = await AlbumQuery.FetchAlbumsList();
+
+  for (final MediaList album in albumList) {
+    final List<MediaItem> songs = await SongQuery.FetchSongsFromAlbum(album);
+
+    album.addMultiple(songs);
+    albums.add(album);
+  }
   AutoMusicPlayer.add(albums);
   AutoMusicPlayer.add(playlists);
-  
+
   await AutoMusic.init();
   runApp(const MyApp());
 }

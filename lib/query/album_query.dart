@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/query/root_querry.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 
@@ -43,5 +44,8 @@ class AlbumQuery {
     },
   ).toList();
     return convertedItems;
+  }
+  static Future<List<MediaList>> FetchAlbumsList() async {
+    return (await FetchAlbums()).map((MediaItem album) => MediaList.fromMediaItem(album)).toList();
   }
 }
