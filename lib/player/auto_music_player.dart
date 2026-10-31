@@ -12,7 +12,7 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
   static final Logger _logger = Logger(
     printer: ServiceLogPrinter('AutoMusicPlayer'),
   );
-  static final AudioPlayer _player = AudioPlayer();
+  final AudioPlayer _player = AudioPlayer();
   static bool playing = false;
 
   AutoMusicPlayer() {
@@ -66,7 +66,6 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
       },
     ).whereType<MediaItem>().distinct().listen(mediaItem.add);
     AudioService.androidForceEnableMediaButtons();
-    await session.setActive(true);
   }
 
   static MediaList? root;
@@ -89,11 +88,22 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   void _broadcastState(PlaybackEvent event) {
-    final playing = _player.playing;
-    final state = playbackState.value.copyWith(
+    final bool isPlaying = _player.playing;
+
+    final AudioProcessingState processingState =
+        const <ProcessingState, AudioProcessingState>{
+          ProcessingState.idle: AudioProcessingState.idle,
+          ProcessingState.loading: AudioProcessingState.loading,
+          ProcessingState.buffering: AudioProcessingState.buffering,
+          ProcessingState.ready: AudioProcessingState.ready,
+          ProcessingState.completed: AudioProcessingState.completed,
+        }[_player.processingState] ??
+        AudioProcessingState.idle;
+
+    final PlaybackState state = playbackState.value.copyWith(
       controls: [
         MediaControl.skipToPrevious,
-        if (playing) MediaControl.pause else MediaControl.play,
+        if (isPlaying) MediaControl.pause else MediaControl.play,
         MediaControl.skipToNext,
         MediaControl.stop,
       ],
@@ -102,23 +112,16 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
         MediaAction.seek,
         MediaAction.seekBackward,
         MediaAction.seekForward,
-        MediaAction.playFromSearch,
+        //MediaAction.playFromSearch,
       },
-      processingState: const {
-        ProcessingState.idle: AudioProcessingState.idle,
-        ProcessingState.loading: AudioProcessingState.loading,
-        ProcessingState.buffering: AudioProcessingState.buffering,
-        ProcessingState.ready: AudioProcessingState.ready,
-        ProcessingState.completed: AudioProcessingState.completed,
-      }[_player.processingState]!,
-      playing:
-          (playing || (_player.processingState == ProcessingState.ready)) &&
-          _player.position < _player.duration!,
+      processingState: processingState,
+      playing: isPlaying,
       updatePosition: _player.position,
       bufferedPosition: _player.bufferedPosition,
       speed: _player.speed,
       queueIndex: _player.currentIndex,
     );
+
     playbackState.add(state);
   }
 
@@ -212,11 +215,11 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
     print("Prepared to play new media item: ${mediaItem.title}");
     index = queue.hasValue ? queue.value.indexOf(mediaItem) : -1;
-    if (index != -1) {
+    if (index == -1) {
       return;
     }
 
-    skipToIndex(index);
+    await skipToIndex(index);
   }
 
   @override

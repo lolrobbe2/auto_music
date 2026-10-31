@@ -10,9 +10,9 @@ class AudioQueryService {
   );
   static final OnAudioQuery audioQuery = OnAudioQuery();
   AudioQueryService() {
-    _initialize();
+    ready = _initialize();
   }
-
+  static Future<void>? ready;
   Future<void> _initialize() async {
     if (_init) {
       _logger.w('Already initialized. Skipping.');
@@ -22,7 +22,7 @@ class AudioQueryService {
 
     try {
       WidgetsFlutterBinding.ensureInitialized();
-
+      
       final bool hasPermission = await audioQuery.checkAndRequest();
 
       if (hasPermission) {

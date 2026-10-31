@@ -14,6 +14,7 @@ class AlbumQuery {
     "sound_recorder",
   };
   static Future<List<MediaItem>> FetchAlbums() async {
+    await AudioQueryService.ready!;
     List<AlbumModel> albums = await AudioQueryService.audioQuery.queryAlbums(
       sortType: AlbumSortType.ALBUM,
     );
