@@ -1,4 +1,5 @@
 import 'package:auto_music/service_log_printer.dart';
+import 'package:flutter/material.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 import 'package:logger/logger.dart';
 
@@ -11,7 +12,7 @@ class AudioQueryService {
   AudioQueryService() {
     _initialize();
   }
-  
+
   Future<void> _initialize() async {
     if (_init) {
       _logger.w('Already initialized. Skipping.');
@@ -20,6 +21,8 @@ class AudioQueryService {
     _logger.i('Initializing...');
 
     try {
+      WidgetsFlutterBinding.ensureInitialized();
+
       final bool hasPermission = await audioQuery.checkAndRequest();
 
       if (hasPermission) {

@@ -44,7 +44,6 @@ kotlin {
     }
 }
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.0") // Or the latest version
 }
 flutter {
     source = "../.."

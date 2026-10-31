@@ -1,41 +1,75 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:auto_music/player/auto_media_item.dart';
-import 'package:flutter/widgets.dart';
 
-class MediaList extends AutoMediaItem {
+class MediaList extends MediaItem {
   MediaList._({
     required String name,
-    required IconData icon,
-    required Uri? artUri,
-  }) : name = name,
-       icon = icon,
-       super(
-         id: name,
+    required String uri,
+    String? id,
+    String? artist,
+    String? album,
+    String? genre,
+    Duration? duration,
+    Map<String, String>? artHeaders,
+    String? displayTitle,
+    String? displaySubtitle,
+    String? displayDescription,
+    Rating? rating,
+    bool? isLive,
+    Map<String, dynamic>? extras,
+  }) : super(
+         id: id ?? name,
          title: name,
-         artUri: artUri,
+         artist: artist,
+         album: album,
+         genre: genre,
+         duration: duration,
+         artUri: Uri.parse(uri),
+         artHeaders: artHeaders,
          playable: false,
+         displayTitle: displayTitle,
+         displaySubtitle: displaySubtitle,
+         displayDescription: displayDescription,
+         rating: rating,
+         isLive: isLive,
+         extras: extras,
        );
-
-  static Future<MediaList> create({
+  static MediaList create({
     required String name,
-    required IconData icon,
-  }) async {
-    final AutoMediaItem item = await AutoMediaItem.create(
-      id: name,
-      title: name,
-      icon: icon,
-      playable: false,
-    );
-
+    String? id,
+    String? uri,
+    String? artist,
+    String? album,
+  }) {
     return MediaList._(
       name: name,
-      icon: icon,
-      artUri: item.artUri,
+      id: id,
+      uri:
+          uri ??
+          'android.resource://com.example.auto_music/drawable/ic_album_placeholder',
+      artist: artist,
+      album: album,
     );
   }
-
-  final String name;
-  final IconData icon;
+  static MediaList fromMediaItem(MediaItem item) {
+    return MediaList._(
+      name: item.title,
+      id: item.id,
+      uri:
+          item.artUri?.toString() ??
+          'android.resource://com.example.auto_music/drawable/ic_album_placeholder',
+      artist: item.artist,
+      album: item.album,
+      genre: item.genre,
+      duration: item.duration,
+      artHeaders: item.artHeaders,
+      displayTitle: item.displayTitle,
+      displaySubtitle: item.displaySubtitle,
+      displayDescription: item.displayDescription,
+      rating: item.rating,
+      isLive: item.isLive,
+      extras: item.extras,
+    );
+  }
 
   final Map<String, MediaItem> _items = <String, MediaItem>{};
 
@@ -83,6 +117,9 @@ class MediaList extends AutoMediaItem {
 
   void add(MediaItem mediaItem) {
     _items[mediaItem.id] = mediaItem;
+  }
+  void addMultiple(List<MediaItem> mediaItems){
+    mediaItems.forEach((item) => add(item));
   }
 }
 

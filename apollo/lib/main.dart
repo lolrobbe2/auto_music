@@ -1,15 +1,20 @@
 import 'package:auto_music/auto_music.dart';
 import 'package:auto_music/player/auto_music_player.dart';
 import 'package:auto_music/player/media_list.dart';
+import 'package:auto_music/query/album_query.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   AutoMusic();
+  final albums = await MediaList.create(name: "Albums",);
+  final playlists = await MediaList.create(
+    name: "Playlists",
+  );
+  albums.addMultiple(await AlbumQuery.FetchAlbumsList());
+  AutoMusicPlayer.add(albums);
+  AutoMusicPlayer.add(playlists);
+  
   await AutoMusic.init();
-  final albums = await MediaList.create(name: "Albums", icon: Icons.album);
-
-  AutoMusicPlayer.root!.add(albums);
   runApp(const MyApp());
 }
 
@@ -21,9 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

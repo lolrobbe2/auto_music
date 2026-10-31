@@ -4,7 +4,6 @@ import 'package:auto_music/player/media_constants.dart';
 import 'package:auto_music/query/root_querry.dart';
 
 import 'auto_music_platform_interface.dart';
-
 class AutoMusic {
   AutoMusic() {
     query; // Forces initialization

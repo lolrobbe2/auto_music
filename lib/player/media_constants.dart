@@ -27,7 +27,11 @@ class MediaConstants {
 
   static final String EXTRAS_KEY_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED";
 }
-
+class MediaMetaDataCompat {
+  static final String METADATA_KEY_ART_URI = "android.media.metadata.ART_URI";
+  static final String METADATA_KEY_DISPLAY_ICON = "android.media.metadata.DISPLAY_ICON";
+  static final String METADATA_KEY_DISPLAY_ICON_URI = "android.media.metadata.DISPLAY_ICON_URI";
+}
 enum ItemStyle {
   //indicate a preference that certain instances of MediaItem should be presented as list items.
   list(1),

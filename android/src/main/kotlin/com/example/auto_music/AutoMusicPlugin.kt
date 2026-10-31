@@ -1,23 +1,29 @@
+
 package com.example.auto_music
 
+import android.content.Context
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-
-/** AutoMusicPlugin */
 class AutoMusicPlugin :
     FlutterPlugin,
     MethodCallHandler {
-    // The MethodChannel that will the communication between Flutter and native Android
-    //
-    // This local reference serves to register the plugin with the Flutter Engine and unregister it
-    // when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
 
-    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "auto_music")
+    private lateinit var channel: MethodChannel
+    private lateinit var context: Context
+
+    override fun onAttachedToEngine(
+        flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
+    ) {
+        context = flutterPluginBinding.applicationContext
+
+        channel = MethodChannel(
+            flutterPluginBinding.binaryMessenger,
+            "auto_music"
+        )
+
         channel.setMethodCallHandler(this)
     }
 
@@ -25,10 +31,15 @@ class AutoMusicPlugin :
         call: MethodCall,
         result: Result
     ) {
-        result.notImplemented()
+        when (call.method) {
+
+            else -> result.notImplemented()
+        }
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(
+        binding: FlutterPlugin.FlutterPluginBinding
+    ) {
         channel.setMethodCallHandler(null)
     }
 }
