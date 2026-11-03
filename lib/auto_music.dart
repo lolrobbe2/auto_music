@@ -6,8 +6,12 @@ import 'package:auto_music/query/root_querry.dart';
 import 'auto_music_platform_interface.dart';
 
 export 'package:audio_service/audio_service.dart' show MediaItem;
+export 'package:auto_music/widgets/art_work.dart';
+export 'package:auto_music/widgets/auto_equalizer_page.dart';
+export 'package:auto_music/widgets/equalizer_page.dart';
+export 'package:auto_music/widgets/media_list.dart';
+export 'package:auto_music/widgets/media_navigation.dart';
 export 'package:auto_music/widgets/player_page.dart';
-
 class AutoMusic {
   AutoMusic() {
     query; // Forces initialization

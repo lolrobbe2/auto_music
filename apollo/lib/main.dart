@@ -11,12 +11,15 @@ Future<void> main() async {
   // Initialize AutoMusic and its player.
   AutoMusic();
 
-  // Wait until the root MediaList has been initialized.
+  // Wait for the player and root media list.
   await AutoMusicPlayer.ready!;
 
-  final MediaList albums = await MediaList.create(name: 'Albums');
-  final MediaList playlists = await MediaList.create(name: 'Playlists');
+  // Create root categories.
+  final MediaList albums = MediaList.create(name: 'Albums');
 
+  final MediaList playlists = MediaList.create(name: 'Playlists');
+
+  // Fetch albums and their songs.
   final List<MediaList> albumList = await AlbumQuery.FetchAlbumsList();
 
   for (final MediaList album in albumList) {
@@ -26,11 +29,11 @@ Future<void> main() async {
     albums.add(album);
   }
 
-  // Register the library in the media browser.
+  // Register categories in the media hierarchy.
   AutoMusicPlayer.add(albums);
   AutoMusicPlayer.add(playlists);
 
-  // Initialize audio_service with your custom handler.
+  // Initialize audio_service.
   await AutoMusic.init();
 
   runApp(MyApp(albums: albumList));
@@ -50,35 +53,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: PlayerShell(albums: albums),
-    );
-  }
-}
-
-class PlayerShell extends StatelessWidget {
-  final List<MediaList> albums;
-
-  const PlayerShell({super.key, required this.albums});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Auto Music'), centerTitle: true),
-      body: PlayerPage(albums: albums),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: 0,
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.music_note_outlined),
-            selectedIcon: Icon(Icons.music_note),
-            label: 'Player',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.library_music_outlined),
-            selectedIcon: Icon(Icons.library_music),
-            label: 'Library',
-          ),
-        ],
+      home: MediaNavigation(
+        root: AutoMusicPlayer.root!,
+        playerPage: PlayerPage(albums: albums),
+        equalizerPage: const EqualizerPage(),
+        autoEqualizerPage: const AutoEqualizerPage(),
       ),
     );
   }

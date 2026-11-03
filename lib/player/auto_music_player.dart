@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:auto_music/player/auto_equalizer.dart';
 import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/service_log_printer.dart';
 import 'package:just_audio/just_audio.dart';
@@ -15,18 +16,30 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
   static final Logger _logger = Logger(
     printer: ServiceLogPrinter('AutoMusicPlayer'),
   );
-  final AudioPlayer _player = AudioPlayer();
+  late final AudioPlayer _player = AudioPlayer(
+    audioPipeline: AudioPipeline(androidAudioEffects: [_equalizer]),
+  );
   static bool playing = false;
+  final AndroidEqualizer _equalizer = AndroidEqualizer();
+
+  late final AutoEqualizer _autoEqualizer = AutoEqualizer(_equalizer);
+
+  AndroidEqualizer get equalizer => _equalizer;
+
+  AutoEqualizer get autoEqualizer => _autoEqualizer;
 
   AutoMusicPlayer() {
     ready ??= _initialize();
   }
   Future<void> _initialize() async {
+    _player.setVolume(0);
     root = await MediaList.create(name: "root");
     final session = await AudioSession.instance;
 
     await session.configure(const AudioSessionConfiguration.music());
 
+    await _equalizer.setEnabled(true);
+    
     _player.playbackEventStream.listen(_broadcastState);
 
     // Listen to changes in the sequence
@@ -62,8 +75,13 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
         })
         .listen((item) {
           mediaItem.add(item);
+
+          if (item != null) {
+            unawaited(_autoEqualizer.applyFor(item));
+          }
         });
     AudioService.androidForceEnableMediaButtons();
+    _player.setVolume(1);
   }
 
   static MediaList? root;

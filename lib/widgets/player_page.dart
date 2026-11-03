@@ -1,7 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:auto_music/auto_music.dart';
+import 'package:auto_music/player/auto_music_player.dart';
 import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/widgets/art_work.dart';
+import 'package:auto_music/widgets/media_list.dart';
 import 'package:flutter/material.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -14,89 +16,20 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  Future<void> _showAlbums() async {
-    MediaList? selectedAlbum;
-
+  Future<void> _showMediaBrowser() async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext sheetContext) {
-        return SafeArea(
-          child: SizedBox(
-            height: MediaQuery.sizeOf(sheetContext).height * 0.65,
-            child: ListView.builder(
-              itemCount: widget.albums.length,
-              itemBuilder: (context, index) {
-                final MediaList album = widget.albums[index];
-
-                return ListTile(
-                  leading: Artwork(item: album, size: 48, borderRadius: 8),
-                  title: Text(album.title),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    selectedAlbum = album;
-                    Navigator.pop(sheetContext);
-                  },
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-
-    if (!mounted || selectedAlbum == null) {
-      return;
-    }
-
-    await _showSongs(selectedAlbum!);
-  }
-
-  Future<void> _showSongs(MediaList album) async {
-    final List<MediaItem> songs = album.GetValues();
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext sheetContext) {
-        return SafeArea(
-          child: SizedBox(
-            height: MediaQuery.sizeOf(sheetContext).height * 0.65,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    album.title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: songs.length,
-                    itemBuilder: (context, index) {
-                      final MediaItem song = songs[index];
-
-                      return ListTile(
-                        leading: const Icon(Icons.music_note),
-                        title: Text(song.title),
-                        subtitle: Text(song.artist ?? 'Unknown artist'),
-                        onTap: () async {
-                          Navigator.pop(sheetContext);
-
-                          await AutoMusic.player.playMediaItem(song);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+      useSafeArea: true,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.sizeOf(context).height * 0.8,
+          child: MediaListWidget(rootItem: AutoMusicPlayer.root!),
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -204,9 +137,9 @@ class _PlayerPageState extends State<PlayerPage> {
                   const SizedBox(height: 32),
 
                   OutlinedButton.icon(
-                    onPressed: _showAlbums,
+                    onPressed: _showMediaBrowser,
                     icon: const Icon(Icons.library_music),
-                    label: const Text('Browse albums'),
+                    label: const Text('Browse media'),
                   ),
                 ],
               ),
@@ -217,7 +150,6 @@ class _PlayerPageState extends State<PlayerPage> {
     );
   }
 }
-
 
 class _ProgressBar extends StatelessWidget {
   final Duration duration;
