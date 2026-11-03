@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:auto_music/player/media_list.dart';
@@ -7,7 +9,8 @@ import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
-  static const String notificationChannelId = 'auto_music.audio';
+  static const String notificationChannelId =
+      'com.example.apollo.channel.audio';
   static const String notificationChannelName = 'Auto Music';
   static final Logger _logger = Logger(
     printer: ServiceLogPrinter('AutoMusicPlayer'),
@@ -22,18 +25,8 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
     root = await MediaList.create(name: "root");
     final session = await AudioSession.instance;
 
-    await session.configure(
-      const AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playback,
-        avAudioSessionMode: AVAudioSessionMode.defaultMode,
-        androidAudioAttributes: AndroidAudioAttributes(
-          contentType: AndroidAudioContentType.music,
-          usage: AndroidAudioUsage.media,
-        ),
-        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-        androidWillPauseWhenDucked: true,
-      ),
-    );
+    await session.configure(const AudioSessionConfiguration.music());
+
     _player.playbackEventStream.listen(_broadcastState);
 
     // Listen to changes in the sequence
@@ -53,18 +46,23 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
       queue.add(items);
     });
 
-    Rx.combineLatest4<int?, List<MediaItem>, bool, List<int>?, MediaItem?>(
-      _player.currentIndexStream,
-      queue,
-      _player.shuffleModeEnabledStream,
-      _player.shuffleIndicesStream,
-      (index, queue, shuffleModeEnabled, shuffleIndices) {
-        final queueIndex = _player.currentIndex;
-        return (queueIndex != null && queueIndex < queue.length)
-            ? queue[queueIndex]
-            : null;
-      },
-    ).whereType<MediaItem>().distinct().listen(mediaItem.add);
+    Rx.combineLatest2<int?, List<MediaItem>, MediaItem?>(
+          _player.currentIndexStream,
+          queue,
+          (index, items) {
+            if (index == null || index < 0 || index >= items.length) {
+              return null;
+            }
+
+            return items[index];
+          },
+        )
+        .distinct((previous, current) {
+          return previous?.id == current?.id;
+        })
+        .listen((item) {
+          mediaItem.add(item);
+        });
     AudioService.androidForceEnableMediaButtons();
   }
 
@@ -127,8 +125,8 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> play() async {
-    await _player.play();
     playing = true;
+    unawaited(_player.play());
   }
 
   @override

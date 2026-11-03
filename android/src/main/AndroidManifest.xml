@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Media permissions -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -10,7 +11,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    
+
     <!-- Bluetooth / voice search, if used by the plugin -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.VOICE_SEARCH_HANDS_FREE" />
@@ -18,7 +19,7 @@
 
     <application>
 
-        
+
         <!-- Android Auto media support -->
         <meta-data
             android:name="com.google.android.gms.car.application"
@@ -28,7 +29,8 @@
         <service
             android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="Instantiatable">
 
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
@@ -40,7 +42,7 @@
         <!-- Media button receiver -->
         <receiver
             android:name="com.ryanheise.audioservice.MediaButtonReceiver"
-            android:exported="true">
+            android:exported="true" tools:ignore="Instantiatable">
 
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

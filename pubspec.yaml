@@ -12,6 +12,7 @@ dependencies:
   audio_session: ^0.2.4
   flutter:
     sdk: flutter
+  flutter_background_service: ^5.1.0
   just_audio: ^0.10.6
   logger: ^2.8.0
   on_audio_query_pluse: ^3.0.7
