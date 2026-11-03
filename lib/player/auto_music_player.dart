@@ -1,9 +1,9 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/service_log_printer.dart';
-import 'package:logger/logger.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {

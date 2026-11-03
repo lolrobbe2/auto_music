@@ -47,6 +47,15 @@ enum ItemStyle {
   final int value;
 }
 
+enum CompletionStatus {
+  notPlayed(0),
+  partiallyPlayed(1),
+  fullyPlayed(2);
+
+  const CompletionStatus(this.value);
+
+  final int value;
+}
 enum DownloadStatus {
   notDownloaded(0),
   downloading(1),
