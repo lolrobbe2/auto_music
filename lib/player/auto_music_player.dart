@@ -11,7 +11,7 @@ import 'package:rxdart/rxdart.dart';
 
 class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
   static const String notificationChannelId =
-      'com.example.apollo.channel.audio';
+      'com.automusic.channel.playback';
   static const String notificationChannelName = 'Auto Music';
   static final Logger _logger = Logger(
     printer: ServiceLogPrinter('AutoMusicPlayer'),
@@ -39,7 +39,7 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
     await session.configure(const AudioSessionConfiguration.music());
 
     await _equalizer.setEnabled(true);
-    
+
     _player.playbackEventStream.listen(_broadcastState);
 
     // Listen to changes in the sequence
@@ -160,6 +160,8 @@ class AutoMusicPlayer extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> stop() async {
     await _player.stop();
+    playing = false;
+    super.stop();
   }
 
   Stream<Duration> get positionStream => _player.positionStream;

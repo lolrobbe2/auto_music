@@ -92,6 +92,24 @@ class AutoEqualizer {
       _EqPoint(10000, 1.5),
       _EqPoint(20000, 0),
     ],
+    'emo-pop': [
+      _EqPoint(20, 0),
+      _EqPoint(60, 1),
+      _EqPoint(250, 1),
+      _EqPoint(1000, 1.5),
+      _EqPoint(4000, 1.5),
+      _EqPoint(10000, 1),
+      _EqPoint(20000, 0.5),
+    ],
+    'alternative-r&b': [
+      _EqPoint(20, 0),
+      _EqPoint(60, 1.5),
+      _EqPoint(250, 0.5),
+      _EqPoint(1000, 0.5),
+      _EqPoint(4000, 1),
+      _EqPoint(10000, 1.5),
+      _EqPoint(20000, 0.5),
+    ],
   };
 
   /// Enables or disables automatic genre-based EQ.
@@ -112,8 +130,7 @@ class AutoEqualizer {
 
     final int version = ++_applyVersion;
 
-    final List<_EqPoint> profile = _getProfile(item.genre);
-
+final List<_EqPoint> profile = _getProfile(item.genre);
     final AndroidEqualizerParameters parameters = await equalizer.parameters;
 
     for (final AndroidEqualizerBand band in parameters.bands) {
@@ -136,18 +153,31 @@ class AutoEqualizer {
 
     final String normalized = genre.toLowerCase();
 
+    if (normalized.contains('emo pop') || normalized.contains('emo-pop')) {
+      return _profiles['emo-pop']!;
+    }
+
+    if (normalized.contains('alternative') ||
+        normalized.contains('alternative r&b') ||
+        normalized.contains('alt r&b') ||
+        normalized.contains('r&b') ||
+        normalized.contains('rnb') ||
+        normalized.contains('rhythm and blues')) {
+      return _profiles['alternative-r&b']!;
+    }
+
     if (normalized.contains('hip hop') ||
         normalized.contains('hip-hop') ||
         normalized.contains('rap')) {
       return _profiles['hip-hop']!;
     }
 
-    if (normalized.contains('rock')) {
-      return _profiles['rock']!;
+    if (normalized.contains('metal')) {
+      return _profiles['metal']!;
     }
 
-    if (normalized.contains('pop')) {
-      return _profiles['pop']!;
+    if (normalized.contains('rock')) {
+      return _profiles['rock']!;
     }
 
     if (normalized.contains('classical')) {
@@ -164,8 +194,8 @@ class AutoEqualizer {
       return _profiles['podcast']!;
     }
 
-    if (normalized.contains('metal')) {
-      return _profiles['metal']!;
+    if (normalized.contains('pop')) {
+      return _profiles['pop']!;
     }
 
     return _flat;
