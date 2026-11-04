@@ -12,6 +12,7 @@ export 'package:auto_music/widgets/equalizer_page.dart';
 export 'package:auto_music/widgets/media_list.dart';
 export 'package:auto_music/widgets/media_navigation.dart';
 export 'package:auto_music/widgets/player_page.dart';
+
 class AutoMusic {
   AutoMusic() {
     query; // Forces initialization

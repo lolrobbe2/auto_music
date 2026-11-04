@@ -1,8 +1,7 @@
-import 'package:auto_music/auto_music.dart';
-import 'package:auto_music/query/root_querry.dart';
-import 'package:on_audio_query_pluse/on_audio_query.dart';
+
 
 class PlayListQuery {
+  /*
   static Future<List<MediaItem>> FetchPlayLists() async {
     await AudioQueryService.ready!;
     List<PlaylistModel> playlists = await AudioQueryService.audioQuery
@@ -17,4 +16,5 @@ class PlayListQuery {
       }
     }
   }
+  */
 }

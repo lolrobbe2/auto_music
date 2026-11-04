@@ -27,11 +27,13 @@ class SongQuery {
             album: album.title,
             title: song.title,
             artist: song.artist,
+            genre: song.genre,
             duration: Duration(milliseconds: song.duration ?? 0),
             artUri: Uri.parse(
               'content://media/external/audio/media/${song.id}/albumart',
             ), // Set album art URI here
             extras: {
+              'mediaStoreId': song.id,
               'filePath': song.data,
               'uri': song.uri,
               'track': song.track,

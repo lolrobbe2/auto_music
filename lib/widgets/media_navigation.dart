@@ -8,6 +8,7 @@ class MediaNavigation extends StatefulWidget {
   final Widget playerPage;
   final Widget equalizerPage;
   final Widget autoEqualizerPage;
+  final Widget settingsPage;
   final String title;
 
   const MediaNavigation({
@@ -16,6 +17,7 @@ class MediaNavigation extends StatefulWidget {
     required this.playerPage,
     required this.equalizerPage,
     required this.autoEqualizerPage,
+    required this.settingsPage,
     this.title = 'Auto Music',
   });
 
@@ -56,6 +58,12 @@ class _MediaNavigationState extends State<MediaNavigation> {
     if (title.contains('genre')) return Icons.category;
 
     return item.playable == true ? Icons.music_note : Icons.folder;
+  }
+
+  void _openSettings() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (context) => widget.settingsPage));
   }
 
   @override
@@ -107,6 +115,13 @@ class _MediaNavigationState extends State<MediaNavigation> {
           selectedIndex == 0 ? widget.title : destinations[selectedIndex].label,
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: _openSettings,
+          ),
+        ],
       ),
       body: IndexedStack(index: selectedIndex, children: pages),
       bottomNavigationBar: NavigationBar(

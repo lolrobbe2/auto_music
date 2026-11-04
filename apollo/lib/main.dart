@@ -3,6 +3,7 @@ import 'package:auto_music/player/auto_music_player.dart';
 import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/query/album_query.dart';
 import 'package:auto_music/query/song_query.dart';
+import 'package:auto_music/widgets/settings_page.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -58,6 +59,12 @@ class MyApp extends StatelessWidget {
         playerPage: PlayerPage(albums: albums),
         equalizerPage: const EqualizerPage(),
         autoEqualizerPage: const AutoEqualizerPage(),
+        settingsPage: SettingsPage(
+          songs: [
+            for (final MediaList album in albums)
+              ...album.items.where((item) => item.playable == true),
+          ],
+        ),
       ),
     );
   }
