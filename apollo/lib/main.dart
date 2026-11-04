@@ -2,6 +2,7 @@ import 'package:auto_music/auto_music.dart';
 import 'package:auto_music/player/auto_music_player.dart';
 import 'package:auto_music/player/media_list.dart';
 import 'package:auto_music/query/album_query.dart';
+import 'package:auto_music/query/play_list_query.dart';
 import 'package:auto_music/query/song_query.dart';
 import 'package:auto_music/widgets/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,10 @@ Future<void> main() async {
     albums.add(album);
   }
 
+  final List<MediaList> playListList = await PlayListQuery.FetchPlayLists();
+  for(final MediaList playList in playListList){
+    playlists.add(playList);
+  }
   // Register categories in the media hierarchy.
   AutoMusicPlayer.add(albums);
   AutoMusicPlayer.add(playlists);

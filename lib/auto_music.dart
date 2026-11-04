@@ -31,7 +31,7 @@ class AutoMusic {
         androidNotificationChannelId: AutoMusicPlayer.notificationChannelId,
         androidNotificationChannelName: AutoMusicPlayer.notificationChannelName,
         androidNotificationOngoing: true,
-        androidStopForegroundOnPause: false,
+        androidStopForegroundOnPause: true,
 
         androidBrowsableRootExtras: {
           AndroidContentStyle.supportedKey: true,

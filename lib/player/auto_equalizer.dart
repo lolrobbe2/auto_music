@@ -20,6 +20,12 @@ class AutoEqualizer {
 
   bool get automaticEnabled => _automaticEnabled;
 
+  String _selectedProfile = 'rock';
+
+  String get selectedProfile => _selectedProfile;
+
+  List<String> get availableProfiles => _profiles.keys.toList();
+
   static const List<_EqPoint> _flat = [_EqPoint(20, 0), _EqPoint(20000, 0)];
 
   static const Map<String, List<_EqPoint>> _profiles = {
@@ -119,6 +125,9 @@ class AutoEqualizer {
   }) async {
     _automaticEnabled = enabled;
 
+    // Cancel any EQ operation currently in progress.
+    _applyVersion++;
+
     if (enabled && currentItem != null) {
       await applyFor(currentItem);
     }
@@ -130,7 +139,7 @@ class AutoEqualizer {
 
     final int version = ++_applyVersion;
 
-final List<_EqPoint> profile = _getProfile(item.genre);
+    final List<_EqPoint> profile = _getProfile(item.genre);
     final AndroidEqualizerParameters parameters = await equalizer.parameters;
 
     for (final AndroidEqualizerBand band in parameters.bands) {
@@ -226,5 +235,33 @@ final List<_EqPoint> profile = _getProfile(item.genre);
     }
 
     return 0;
+  }
+
+  /// Manually selects and applies an equalizer profile.
+  Future<void> setManualProfile(String profileName) async {
+    if (_automaticEnabled) return;
+
+    final List<_EqPoint>? profile = _profiles[profileName];
+
+    if (profile == null) return;
+
+    _selectedProfile = profileName;
+
+    // Invalidate any pending automatic EQ operation.
+    final int version = ++_applyVersion;
+
+    final AndroidEqualizerParameters parameters = await equalizer.parameters;
+
+    for (final AndroidEqualizerBand band in parameters.bands) {
+      if (version != _applyVersion) return;
+
+      final double gain = _interpolate(band.centerFrequency, profile);
+
+      final double clampedGain = gain
+          .clamp(parameters.minDecibels, parameters.maxDecibels)
+          .toDouble();
+
+      await band.setGain(clampedGain);
+    }
   }
 }
